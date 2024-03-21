@@ -14,14 +14,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] Player playerReferences;
 
 
-    [Range(3, 15)]
-    public int valx, valy;
+    [Range(3, 30)]
+    public int valx ;
+    [Range(3, 18)]
+    public int valy;
 
     public bool comio =false;
     public bool murio = false;
 
     private void Awake()
     {
+        CreacionMatriz();
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -33,18 +36,13 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        CreacionMatriz();
         GenerateComida();
-    }
-    void Update()
-    {
-        
     }
     void CreacionMatriz()
     {
 
-        float inicioI = -valx/2;
-        float inicioJ = -valy/2;
+        float inicioI = -(valx/4);
+        float inicioJ = -(valy/4);
         matrizFondo = new Vector2[valy,valx];
         for (int i = 0; i < matrizFondo.GetLength(0); i++)
         {
@@ -53,35 +51,28 @@ public class GameManager : MonoBehaviour
                 matrizFondo[i, j] = new Vector2(inicioI, inicioJ);
                 if ((i +j) % 2 ==0)
                 {
-                    print("Hola1");
                     Instantiate(fondos[0], matrizFondo[i,j], Quaternion.identity,matrizPadre);
                 }else
                 {
-                    print("Hola2");
                     Instantiate(fondos[1], matrizFondo[i, j], Quaternion.identity, matrizPadre);
                 }
                 
-                //print(matrizFondo[i,j]);
-                inicioI += 1.024f;
+                inicioI += 0.512f;
             }
-            inicioJ += 1.024f;
-            inicioI = -valx / 2;
+            inicioJ += 0.512f;
+            inicioI = -valx / 4;
         }
     }
     public void GenerateComida()
     {
         comio = true;
-        //
         Vector2 comidaPos;
-
-        // Intentar encontrar una posición no ocupada por la serpiente
         do
         {
             comidaPos = matrizFondo[Random.Range(0, valy), Random.Range(0, valx)];
         } while (IsSnakePosition(comidaPos));
 
         comidaPrefab.transform.position = comidaPos;
-        ///Hacer instancia de la manzana
         comio = false;
     }
     bool IsSnakePosition(Vector2 pos)
