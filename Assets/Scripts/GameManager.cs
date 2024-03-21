@@ -4,15 +4,37 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]GameObject[] fondos;
-    Vector2[,] matrizFondo;
-    [SerializeField]Transform matrizPadre;
+    public static GameManager Instance;
 
-    [Range(1, 10)]
+    [SerializeField] GameObject comidaPrefab;
+
+    [SerializeField]GameObject[] fondos;
+    public Vector2[,] matrizFondo;
+    [SerializeField]Transform matrizPadre;
+    [SerializeField] Player playerReferences;
+
+
+    [Range(3, 15)]
     public int valx, valy;
+
+    public bool comio =false;
+    public bool murio = false;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
     void Start()
     {
         CreacionMatriz();
+        GenerateComida();
     }
     void Update()
     {
@@ -45,5 +67,31 @@ public class GameManager : MonoBehaviour
             inicioJ += 1.024f;
             inicioI = -valx / 2;
         }
+    }
+    public void GenerateComida()
+    {
+        comio = true;
+        //
+        Vector2 comidaPos;
+
+        // Intentar encontrar una posición no ocupada por la serpiente
+        do
+        {
+            comidaPos = matrizFondo[Random.Range(0, valy), Random.Range(0, valx)];
+        } while (IsSnakePosition(comidaPos));
+
+        comidaPrefab.transform.position = comidaPos;
+        ///Hacer instancia de la manzana
+        comio = false;
+    }
+    bool IsSnakePosition(Vector2 pos)
+    {
+        // Verificar si la posición está ocupada por la serpiente
+        foreach (Vector2 snakePos in playerReferences.positions)
+        {
+            if (pos == snakePos)
+                return true;
+        }
+        return false;
     }
 }
