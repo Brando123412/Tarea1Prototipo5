@@ -8,9 +8,13 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] TMP_Text maxScore;
     [SerializeField] TMP_Text scoreActual;
-    public void UpdateTextScore(int actualScore, int highScore)
+    private void Start()
     {
         
-        
+    }
+    public void UpdateTextScore(int actualScore, int highScore)
+    {
+       maxScore.text = highScore.ToString();
+       scoreActual.text = actualScore.ToString();
     }
 }

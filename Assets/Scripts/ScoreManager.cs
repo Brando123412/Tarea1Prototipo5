@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    int actualScore;
-    int highScore;
+    [SerializeField] int actualScore=0;
+    [SerializeField] int highScore=0;
     [SerializeField] UIManager UMI;
+
     private void Update()
     {
-        if (GameManager.Instance.comio)
-        {
-            UpdateScore();
-        }
         if (GameManager.Instance.murio)
         {
             ResetScoreApple();
@@ -20,10 +17,16 @@ public class ScoreManager : MonoBehaviour
     }
     public void UpdateScore()
     {
+        actualScore++; 
+        if (actualScore > highScore)
+        {
+            highScore++;
+        }
         UMI.UpdateTextScore(actualScore, highScore);
     }
     public void ResetScoreApple()
     {
-        UMI.UpdateTextScore(0, 0);
+        UMI.UpdateTextScore(0, highScore);
+        actualScore = 0;
     }
 }
