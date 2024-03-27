@@ -10,7 +10,6 @@ public class Player : MonoBehaviour
 
     [SerializeField] Vector2 direction;
     public List<Transform> positions;
-    [SerializeField] ScoreManager SM;
 
     private void Awake()
     {
@@ -20,7 +19,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         direction = Vector2.right;
-        nextPosition = CalculateInitialPosition();
+        nextPosition = InitialPosition();
         transform.position = nextPosition;
 
         positions.Add(transform);
@@ -28,7 +27,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        MoveSnake();
+        //MoveSnake();
         HandleInput();
     }
 
@@ -47,7 +46,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void MoveSnake()
+    /*private void MoveSnake()
     {
         nextPosition += direction * speed * Time.deltaTime;
 
@@ -76,7 +75,7 @@ public class Player : MonoBehaviour
         }
 
         MoveTail();
-    }
+    }*/
 
     private void MoveTail()
     {
@@ -91,7 +90,7 @@ public class Player : MonoBehaviour
         if (collision.CompareTag("Comidita"))
         {
             GameManager.Instance.GenerateComida();
-            SM.UpdateScore();
+            GameManager.Instance.comio = true;
             AddCola();
         }
     }
@@ -102,11 +101,9 @@ public class Player : MonoBehaviour
         positions.Add(newTailSegment.transform);
     }
 
-    private Vector2 CalculateInitialPosition()
+    private Vector2 InitialPosition()
     {
-        int randX = Random.Range(0, GameManager.Instance.valx - 1);
-        int randY = Random.Range(0, GameManager.Instance.valy - 1);
-        Vector2 initialPosition = GameManager.Instance.matrizFondo[randY, randX].position;
+        Vector2 initialPosition = GameManager.Instance.matrizFondo[2, 2];
         return initialPosition;
     }
 }

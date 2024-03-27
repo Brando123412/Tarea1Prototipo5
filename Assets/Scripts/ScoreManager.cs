@@ -10,10 +10,15 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.murio)
+        /*if (GameManager.Instance.murio)
         {
             ResetScoreApple();
+        }*/
+        if (GameManager.Instance.comio)
+        {
+            UpdateScore();
         }
+
     }
     public void UpdateScore()
     {
@@ -23,6 +28,7 @@ public class ScoreManager : MonoBehaviour
             highScore++;
         }
         UMI.UpdateTextScore(actualScore, highScore);
+        GameManager.Instance.comio = false;
     }
     public void ResetScoreApple()
     {

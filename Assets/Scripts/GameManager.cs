@@ -2,37 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    public static GameManager Instance;
 
     [SerializeField] GameObject comidaPrefab;
-
-    [SerializeField]GameObject[] fondos;
-    public Transform[,] matrizFondo;
-    [SerializeField]Transform matrizPadre;
+    [SerializeField] GameObject[] fondos;
+    public Vector2[,] matrizFondo;
+    [SerializeField] Transform matrizPadre;
     [SerializeField] Player playerReferences;
 
 
-    [Range(3, 30)]
+    [Range(6, 30)]
     public int valx ;
-    [Range(3, 18)]
+    [Range(6, 12)]
     public int valy;
 
     public bool murio = false;
+    public bool comio = false;
     
 
     private void Awake()
     {
         CreacionMatriz();
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this);
-        }
-        else
-        {
-            Instance = this;
-        }
+       
+        //MusicManagerPersistent.Instance.PlayRandomMusic();
     }
     void Start()
     {
@@ -40,23 +33,21 @@ public class GameManager : MonoBehaviour
     }
     void CreacionMatriz()
     {
-
         float inicioI = -(valx / 4);
         float inicioJ = -(valy / 4);
-        matrizFondo = new Transform[valy, valx]; // Cambiado a un arreglo de Transform
+        matrizFondo = new Vector2[valy, valx]; 
         for (int i = 0; i < matrizFondo.GetLength(0); i++)
         {
             for (int j = 0; j < matrizFondo.GetLength(1); j++)
             {
-                matrizFondo[i, j] = new GameObject("Tile (" + i + ", " + j + ")").transform; // Crear un nuevo GameObject como transform
-                matrizFondo[i, j].position = new Vector3(inicioI, inicioJ, 0f); // Asignar posición al transform
+                matrizFondo[i, j] = new Vector2(inicioI, inicioJ); 
                 if ((i + j) % 2 == 0)
                 {
-                    Instantiate(fondos[0], matrizFondo[i, j].position, Quaternion.identity, matrizPadre);
+                    Instantiate(fondos[0], matrizFondo[i, j], Quaternion.identity, matrizPadre);
                 }
                 else
                 {
-                    Instantiate(fondos[1], matrizFondo[i, j].position, Quaternion.identity, matrizPadre);
+                    Instantiate(fondos[1], matrizFondo[i, j], Quaternion.identity, matrizPadre);
                 }
                 inicioI += 0.512f;
             }
@@ -66,11 +57,10 @@ public class GameManager : MonoBehaviour
     }
     public void GenerateComida()
     {
-
         Vector2 comidaPos;
         do
         {
-            comidaPos = matrizFondo[Random.Range(0, valy), Random.Range(0, valx)].position; // Acceder a la posición del transform
+            comidaPos = matrizFondo[Random.Range(0, valy), Random.Range(0, valx)]; // Acceder a la posición del transform
         } while (IsSnakePosition(comidaPos));
 
         comidaPrefab.transform.position = comidaPos;
@@ -80,7 +70,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (Transform snakePos in playerReferences.positions)
         {
-            if ((Vector2)snakePos.position == pos) // Acceder a la posición del transform
+            if ((Vector2)snakePos.position == pos) 
                 return true;
         }
         return false;
