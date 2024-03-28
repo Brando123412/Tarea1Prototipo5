@@ -7,6 +7,7 @@ public class MusicManagerPersistent : SingeltonPersistent<MusicManagerPersistent
     public AudioSource soundButtons;
     public AudioSource music;
     [SerializeField] AudioClip[] musicClips;
+    public int puntaje=0;
     private new void Awake()
     {
         base.Awake();
@@ -22,5 +23,9 @@ public class MusicManagerPersistent : SingeltonPersistent<MusicManagerPersistent
          AudioClip randomClip = musicClips[randomIndex];
          music.clip = randomClip;
          music.Play();
+    }
+    public void PuntajeMax(int puntajeAlto)
+    {
+        puntaje = puntajeAlto;
     }
 }

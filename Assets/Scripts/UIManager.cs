@@ -8,9 +8,13 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] TMP_Text maxScore;
     [SerializeField] TMP_Text scoreActual;
-    private void Start()
+    [SerializeField] GameObject panelLow;
+    private void Update()
     {
-        
+        if (GameManager.Instance.murio)
+        {
+             panelLow.SetActive(true);
+        }
     }
     public void UpdateTextScore(int actualScore, int highScore)
     {

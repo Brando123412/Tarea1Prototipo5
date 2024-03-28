@@ -18,8 +18,10 @@ public class Player : MonoBehaviour
     int x=2, y = 2;
     private void Awake()
     {
+        x = 2; y = 2;
         positions = new List<Vector2>();
         caminarX = 1;
+        caminarY =0;
         directionX = x+1;
         directionY = y;
     }
@@ -68,6 +70,11 @@ public class Player : MonoBehaviour
             }
             directionX +=caminarX;
             directionY += caminarY;
+            if (directionX <0 || directionY < 0 || directionY >GameManager.Instance.valy-1 || directionX > GameManager.Instance.valx-1)
+            {
+                GameManager.Instance.murio = true;
+                Time.timeScale = 0;
+            }
         }
 
 
@@ -79,6 +86,11 @@ public class Player : MonoBehaviour
             GameManager.Instance.GenerateComida();
             GameManager.Instance.comio = true;
             AddCola((int)colas[colas.Count-1].position.x, (int)colas[colas.Count - 1].position.y);
+        }
+        if (collision.CompareTag("Cola"))
+        {
+            GameManager.Instance.murio = true;
+            Time.timeScale = 0;
         }
     }
 

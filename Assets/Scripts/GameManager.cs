@@ -24,11 +24,11 @@ public class GameManager : Singleton<GameManager>
     private void Awake()
     {
         CreacionMatriz();
-       
-        //MusicManagerPersistent.Instance.PlayRandomMusic();
+        MusicManagerPersistent.Instance.PlayRandomMusic();
     }
     void Start()
     {
+        Time.timeScale = 1;
         GenerateComida();
     }
     void CreacionMatriz()

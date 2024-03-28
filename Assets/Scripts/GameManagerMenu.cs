@@ -7,6 +7,7 @@ public class GameManagerMenu : MonoBehaviour
 {
     private void Awake()
     {
+        Time.timeScale = 1;
         MusicManagerPersistent.Instance.PlayRandomMusic();
     }
     public void GoToGame()
