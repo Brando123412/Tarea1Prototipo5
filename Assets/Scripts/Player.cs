@@ -5,29 +5,33 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] float speed;
-    public GameObject tailPrefab;
-    private Vector2 nextPosition;
+    public GameObject colaPrefab;
+    
+    public List<Vector2> positions;
+    public List<Transform> colas;
+    [SerializeField] Transform ParentCola;
 
-    [SerializeField] Vector2 direction;
-    public List<Transform> positions;
-
+    [SerializeField] int directionX;
+    [SerializeField] int directionY;
+    [SerializeField] int caminarX;
+    [SerializeField] int caminarY;
+    int x=2, y = 2;
     private void Awake()
     {
-        positions = new List<Transform>();
+        positions = new List<Vector2>();
+        caminarX = 1;
+        directionX = x+1;
+        directionY = y;
     }
 
     private void Start()
     {
-        direction = Vector2.right;
-        nextPosition = InitialPosition();
-        transform.position = nextPosition;
-
-        positions.Add(transform);
+        InitialAction();
     }
 
     private void Update()
     {
-        //MoveSnake();
+        
         HandleInput();
     }
 
@@ -36,74 +40,73 @@ public class Player : MonoBehaviour
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (horizontalInput != 0)
+        if (horizontalInput != 0 && caminarX == 0)
         {
-            direction = new Vector2(horizontalInput, 0f);
+            caminarX = (int)horizontalInput;
+            caminarY = 0;
         }
-        else if (verticalInput != 0)
+        else if (verticalInput != 0 && caminarY ==0)
         {
-            direction = new Vector2(0f, verticalInput);
+            caminarY = (int)verticalInput; 
+            caminarX = 0;
         }
-    }
 
-    /*private void MoveSnake()
-    {
-        nextPosition += direction * speed * Time.deltaTime;
+        transform.position = Vector2.MoveTowards(transform.position, GameManager.Instance.matrizFondo[directionY, directionX], speed * Time.deltaTime);
 
-        transform.position = nextPosition;
-
-        for (int i = 1; i < positions.Count; i++)
+        if (Mathf.Approximately(transform.position.x, GameManager.Instance.matrizFondo[directionY, directionX].x) &&
+            Mathf.Approximately(transform.position.y, GameManager.Instance.matrizFondo[directionY, directionX].y))
         {
-            if (nextPosition == (Vector2)positions[i].position)
+            UpdateTailPosition();
+            if (colas.Count > 0)
             {
-                GameManager.Instance.murio = true;
-                return;
+                positions.Insert(0, GameManager.Instance.matrizFondo[directionY, directionX]);
+                if (positions.Count - colas.Count >=2)
+                {
+                    positions.RemoveAt(colas.Count+1);
+                }
+                
             }
+            directionX +=caminarX;
+            directionY += caminarY;
         }
 
-        positions.Insert(0, transform);
-        if (positions.Count > 1)
-            positions.RemoveAt(positions.Count - 1);
 
-
-        if (nextPosition.x < GameManager.Instance.matrizFondo[0, 0].position.x ||
-            nextPosition.x > GameManager.Instance.matrizFondo[0, GameManager.Instance.valx - 1].position.x ||
-            nextPosition.y < GameManager.Instance.matrizFondo[0, 0].position.y ||
-            nextPosition.y > GameManager.Instance.matrizFondo[GameManager.Instance.valy - 1, 0].position.y)
-        {
-            GameManager.Instance.murio = true;
-        }
-
-        MoveTail();
-    }*/
-
-    private void MoveTail()
-    {
-        for (int i = 1; i < positions.Count; i++)
-        {
-            positions[i].position = Vector2.Lerp(positions[i].position, positions[i - 1].position, Time.deltaTime * speed);
-        }
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Comidita"))
         {
             GameManager.Instance.GenerateComida();
             GameManager.Instance.comio = true;
-            AddCola();
+            AddCola((int)colas[colas.Count-1].position.x, (int)colas[colas.Count - 1].position.y);
         }
     }
 
-    private void AddCola()
+    private void AddCola(int x1,int y1)
     {
-        GameObject newTailSegment = Instantiate(tailPrefab, positions[positions.Count - 1].position, Quaternion.identity);
-        positions.Add(newTailSegment.transform);
+        Vector3 tmtVector = GameManager.Instance.matrizFondo[y1, x1];
+        GameObject tmp = Instantiate(colaPrefab,new Vector3(tmtVector.x, tmtVector.y, 0), Quaternion.identity, ParentCola);
+        colas.Insert(0,tmp.transform);
     }
 
-    private Vector2 InitialPosition()
+    private void InitialAction()
     {
-        Vector2 initialPosition = GameManager.Instance.matrizFondo[2, 2];
-        return initialPosition;
+        transform.position = GameManager.Instance.matrizFondo[y, x];
+        positions.Add(GameManager.Instance.matrizFondo[y, x]);
+        x--;
+        AddCola(x,y);
+        
+        positions.Add(GameManager.Instance.matrizFondo[y, x]);
+        x--;
+        AddCola(x,y);
+        positions.Add(GameManager.Instance.matrizFondo[y, x]);
+    }
+
+    private void UpdateTailPosition()
+    {
+        for (int i = 0; i < colas.Count; i++)
+        {
+            colas[i].position = positions[i];
+        }
     }
 }

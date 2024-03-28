@@ -60,7 +60,7 @@ public class GameManager : Singleton<GameManager>
         Vector2 comidaPos;
         do
         {
-            comidaPos = matrizFondo[Random.Range(0, valy), Random.Range(0, valx)]; // Acceder a la posición del transform
+            comidaPos = matrizFondo[Random.Range(0, valy), Random.Range(0, valx)];
         } while (IsSnakePosition(comidaPos));
 
         comidaPrefab.transform.position = comidaPos;
@@ -68,9 +68,9 @@ public class GameManager : Singleton<GameManager>
     }
     bool IsSnakePosition(Vector2 pos)
     {
-        foreach (Transform snakePos in playerReferences.positions)
+        foreach (Vector2 snakePos in playerReferences.positions)
         {
-            if ((Vector2)snakePos.position == pos) 
+            if (snakePos == pos) 
                 return true;
         }
         return false;
